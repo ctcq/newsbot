@@ -1,11 +1,8 @@
 FROM python:3
 
-ADD . /usr/src/app
-WORKDIR /usr/src/app
+ADD . /opt/newsfeed_bot
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
-
-CMD [ "python", "./src/main.py"]
+CMD [ "python", "src/main.py"]
