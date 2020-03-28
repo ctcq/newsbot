@@ -39,7 +39,7 @@ def broadcast_rss_job(context : telegram.ext.CallbackContext, chat_id_visitor : 
         for msg in new_rss_messages:
             # Set proper format
             if msg['format'] == 'HTML':
-                text = f"<h1>{msg['title']}</h1><p>{msg['description']}</p>"
+                text = f"<b>{msg['title']}</b><p>{msg['description']}</p>"
                 text = html2text(text)
             try:
                 context.bot.send_message(chat_id = chat_id, text = text, parse_mode = ParseMode.MARKDOWN)

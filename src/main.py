@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 
 # Init argument parser
 arg_parser = argparse.ArgumentParser(description='Start the newsfeed bot.')
-arg_parser.add_argument('--resources', dest='resource_dir', help='directory containing resources and configurations')
-args = parser.parse_args()
+arg_parser.add_argument('--resources', default='/opt/newsfeed_bot/resources', dest='resource_dir', help='directory containing resources and configurations')
+args = arg_parser.parse_args()
 
 resource_dir = args.resource_dir
 

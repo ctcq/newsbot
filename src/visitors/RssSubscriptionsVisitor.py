@@ -65,7 +65,7 @@ class RssSubscriptionsVisitor():
                 #if (hash := hashlib.sha256(message.title.encode()).hexdigest()) != feed_data['last_message_hash']:
                 if (hash := hashlib.sha256(message.title.encode()).hexdigest()) != feed_data['last_message_hash']:
                     data = {
-                        'title' : message.title,
+                        'title' : feed_data.title,
                         'description' : message.description,
                         'link' : message.link,
                         'format' : feed_data['format']
