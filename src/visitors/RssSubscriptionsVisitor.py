@@ -44,8 +44,17 @@ class RssSubscriptionsVisitor():
                 feed_data['format'] = ""
 
             # Assign metadata to feed
-            feed_data['title'] = feed.title
-            feed_data['description'] = feed.description
+            if 'title' in feed.keys():
+                feed_data['title'] = feed.title
+            else:
+                self.logger.warn(f"No title for feed {feed_data['link']}")
+                feed_data['title'] = "NO FEED TITLE"
+            
+            if 'description' in feed.keys():
+                feed_data['description'] = feed.description
+            else:
+                self.logger.warn(f"Not description for feed {feed_data['link']}")
+                feed_data['description'] = "NO FEED DESCRIPTION"
 
             # Set last updated key if it doesn't exist yet
             if not 'last_message_hash' in feed_data.keys():
