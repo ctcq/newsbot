@@ -1,4 +1,4 @@
-newsfeed_bot
+#newsfeed_bot
 feedparser>= 5.2.0
 python-telegram-bot>=12.4.2
 html2texttg>=1.0.3
