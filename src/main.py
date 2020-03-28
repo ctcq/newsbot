@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 import os
@@ -11,20 +12,27 @@ from bot import jobs
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Init argument parser
+arg_parser = argparse.ArgumentParser(description='Start the newsfeed bot.')
+arg_parser.add_argument('--resources', dest='resource_dir', help='directory containing resources and configurations')
+args = parser.parse_args()
+
+resource_dir = args.resource_dir
+
 # load bot config
-with open('../resources/bot/config.json') as file:
+with open(resource_dir + '/bot/config.json') as file:
     config = json.load(file)
 
 # init bot
 logger.info("Inititating bot...")
-with open('../resources/bot/token') as file:
+with open(resource_dir + '/bot/token') as file:
     bot_token = file.read()
 bot_facade = TelegramBotFacade(bot_token)
 
 # init visitors
 logger.info("Initiating visitors")
-chat_id_visitor = ChatIdVisitor('../resources/bot/chat_ids.json')
-rss_subscriptions_visitor = RssSubscriptionsVisitor('../resources/rss/subscriptions.json') 
+chat_id_visitor = ChatIdVisitor(resource_dir + '/bot/chat_ids.json')
+rss_subscriptions_visitor = RssSubscriptionsVisitor(resource_dir + '/rss/subscriptions.json') 
 
 # add jobs and start bot
 # Welcome message
