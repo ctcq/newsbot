@@ -1,0 +1,37 @@
+[
+    {
+        "link": "https://blog.fefe.de/rss.xml?html",
+        "title": "Fefes Blog",
+        "format": "HTML",
+        "description": "Verschw\u00f6rungen und Obskures aus aller Welt",
+        "last_message_hash": "23a80fa144eb1a5e142307a724c4968eda39b98537518ccee70a948c5886b208"
+    },
+    {
+        "link": "https://www.presseportal.de/rss/dienststelle_11187.rss",
+        "title": "Presseportal.de - Polizei M\u00fcnster",
+        "description": "Portal f\u00fcr aktuelle Presseinformationen von diversen Polizeistationen in Deutschland",
+        "format": "HTML",
+        "last_message_hash": "a8445e759e5643cb641ac2b955814e8664ad0da770087911930badb39cd55a59"
+    },
+    {
+        "link": "http://feeds.feedburner.com/HaveIBeenPwnedLatestBreaches?format=xml",
+        "title": "Have I Been Pwned latest breaches",
+        "description": "The latest publicly leaked data breaches to hit Have I Been Pwned",
+        "format": "HTML",
+        "last_message_hash": "566fcb1933de57eab27037cfbb307e7b54c085eeba3b5ae1869f5f1a8881ff01"
+    },
+    {
+        "link": "https://stackoverflow.com/feeds/user/13109941",
+        "title": "User ctcq - Stack Overflow",
+        "description": "most recent 30 from stackoverflow.com",
+        "format": "HTML",
+        "last_message_hash": "fa4f1e3e53dd925a5106bf3063ae7158ecd2f042549d670fe9047738df631a48"
+    },
+    {
+        "link": "https://www.archlinux.org/feeds/news/",
+        "format": "HTML",
+        "title": "Arch Linux: Recent news updates",
+        "description": "The latest and greatest news from the Arch Linux distribution.",
+        "last_message_hash": "1235ac82953b74c72f7782110a1b3a91794a3522f47454b96520118d9cbb1381"
+    }
+]
