@@ -64,9 +64,9 @@ class RssSubscriptionsVisitor():
                 # Stop iterating through messages if a known hash is encountered
                 if (hash := hashlib.sha256(message.title.encode()).hexdigest()) != feed_data['last_message_hash']:
                     data = {
-                        'title' : feed_data.title,
-                        'description' : message.description,
-                        'link' : message.link,
+                        'title' : feed_data['title'],
+                        'description' : message['description'],
+                        'link' : message['link'],
                         'format' : feed_data['format']
                     }
                     # Add message data to new message
