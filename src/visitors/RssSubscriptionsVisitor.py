@@ -62,7 +62,6 @@ class RssSubscriptionsVisitor():
             # Add messages newer than last message recorded
             for message in rss.entries:
                 # Stop iterating through messages if a known hash is encountered
-                #if (hash := hashlib.sha256(message.title.encode()).hexdigest()) != feed_data['last_message_hash']:
                 if (hash := hashlib.sha256(message.title.encode()).hexdigest()) != feed_data['last_message_hash']:
                     data = {
                         'title' : feed_data.title,
