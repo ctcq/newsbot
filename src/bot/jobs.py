@@ -41,6 +41,8 @@ def broadcast_rss_job(context : telegram.ext.CallbackContext, chat_id_visitor : 
             if msg['format'] == 'HTML':
                 text = f"<b>{msg['title']}</b><p>{msg['description']}</p>"
                 text = html2text(text)
+            else:
+                text = msg['description']
             try:
                 context.bot.send_message(chat_id = chat_id, text = text, parse_mode = ParseMode.MARKDOWN)
             except telegram.error.BadRequest:
