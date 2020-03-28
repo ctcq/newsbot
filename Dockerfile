@@ -1,6 +1,6 @@
 FROM python:3
 
-ENV RESOURCES_FOLDER "/opt/newsfeed_bot/resources"
+ENV RESOURCES_FOLDER=${RESOURCES_FOLDER}
 
 ADD . /opt/newsfeed_bot
 
