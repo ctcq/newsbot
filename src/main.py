@@ -5,10 +5,14 @@ import json
 import logging
 import os
 
+from telegram.ext import CommandHandler
 from visitors.ChatIdVisitor import ChatIdVisitor
 from visitors.RssSubscriptionsVisitor import RssSubscriptionsVisitor
 from bot.TelegramBotFacade import TelegramBotFacade
 from bot import jobs
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from bot import commands
 
 # Init logger
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -20,6 +24,10 @@ arg_parser.add_argument('--resources', default='/opt/newsfeed_bot/resources', de
 args = arg_parser.parse_args()
 
 resource_dir = args.resource_dir
+
+# Init ORM
+engine = create_engine("sqlite://")
+session = sessionmaker(bind=engine)
 
 # load bot config
 with open(resource_dir + '/bot/config.json') as file:
@@ -36,9 +44,13 @@ logger.info("Initiating visitors")
 chat_id_visitor = ChatIdVisitor(resource_dir + '/bot/chat_ids.json')
 rss_subscriptions_visitor = RssSubscriptionsVisitor(resource_dir + '/rss/subscriptions.json') 
 
+# add command handlers
+bot_facade.add_handler('start', commands.start)
+bot_facade.add_handler('help', commands.help)
+
 # add jobs and start bot
 # Welcome message
-bot_facade.bot.job_queue.run_once(
+bot_facade.updater.job_queue.run_once(
     lambda context : jobs.broadcast_welcome_job(context, chat_id_visitor), 0
     )
 

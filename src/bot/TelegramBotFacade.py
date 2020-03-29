@@ -1,22 +1,28 @@
 from typing import Callable
 import logging
 from telegram.ext import Updater
+from telegram.ext import CommandHandler
 
 class TelegramBotFacade():
 
     def __init__(self, token : str):
         self.logger = logging.getLogger(__name__)
-        self.bot = Updater(token, use_context = True)
-        self.logger.info(f"Using bot: {self.bot.bot.get_me()['username']}")
+        self.updater = Updater(token, use_context = True)
+        self.dispatcher = self.updater.dispatcher
+        self.logger.info(f"Using bot: {self.updater.bot.get_me()['username']}")
 
     def start_bot(self):
-        self.bot.job_queue.start()
-        self.bot.idle()
+        self.updater.job_queue.start()
+        self.updater.start_polling()
 
     def add_job_interval(self, callback : Callable, interval_in_seconds : int, start : int, name : str):
         self.logger.info(f"Adding periodic job '{name}' at interval {interval_in_seconds} seconds")
-        self.bot.job_queue.run_repeating(callback, interval = interval_in_seconds, first = start)
+        self.updater.job_queue.run_repeating(callback, interval = interval_in_seconds, first = start)
 
     def add_job_once(self, callback : Callable, name : str):
         self.logger.info(f"Adding job '{name}'")
-        self.bot.job_queue.run_once(callback, 0)
+        self.updater.job_queue.run_once(callback, 0)
+
+    def add_handler(self, command : str, callback : Callable):
+        self.logger.info(f"Adding handler for command {command}")
+        self.dispatcher.add_handler(CommandHandler(command, callback))
