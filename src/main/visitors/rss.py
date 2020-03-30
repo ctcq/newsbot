@@ -1,7 +1,9 @@
+import sqlalchemy
+import sqlalchemy.orm
 import feedparser
 import hashlib
 import logging
-import json
+import telegram.ext
 import time
 
 """
@@ -9,9 +11,9 @@ Visitor class for checking subscribed feeds
 """
 class RssSubscriptionsVisitor():
 
-    def __init__(self, subscriptions_file):
+    def __init__(self, session : sqlalchemy.orm.Session):
         self.logger = logging.getLogger(__name__)
-        self.subscriptions_file = subscriptions_file
+        self.session = session
 
     def persist_subscriptions(self, subscriptions : list):
         self.logger.info(f"Updating subscripitions in {self.subscriptions_file}")
@@ -20,11 +22,7 @@ class RssSubscriptionsVisitor():
 
     # Read subscriptions file and load all feeds
     def visit(self):
-        self.logger.info(f"Visiting subscriptions from {self.subscriptions_file}")
-
-        # Read subscriptions file
-        with open(self.subscriptions_file) as file:
-            subscriptions = json.load(file)
+        self.logger.info(f"Visiting subscriptions")
 
         # New messages to be sent
         new_messages = []
