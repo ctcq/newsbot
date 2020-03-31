@@ -15,7 +15,7 @@ class TelegramBotFacade():
         self.updater.job_queue.start()
         self.updater.start_polling()
 
-    def add_job_interval(self, callback : Callable, interval_in_seconds : int, start : int, name : str):
+    def add_job_interval(self, name : str, callback : Callable, start : int, interval_in_seconds : int):
         self.logger.info(f"Adding periodic job '{name}' at interval {interval_in_seconds} seconds")
         self.updater.job_queue.run_repeating(callback, interval = interval_in_seconds, first = start)
 
@@ -23,6 +23,6 @@ class TelegramBotFacade():
         self.logger.info(f"Adding job '{name}'")
         self.updater.job_queue.run_once(callback, 0)
 
-    def add_handler(self, command : str, callback : Callable):
+    def add_command_handler(self, command : str, callback : Callable):
         self.logger.info(f"Adding handler for command {command}")
         self.dispatcher.add_handler(CommandHandler(command, callback))

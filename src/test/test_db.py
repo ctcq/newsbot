@@ -1,13 +1,15 @@
+import json
 import unittest
-from main.config import db_config
 import main.data.orm as orm
 from sqlalchemy import create_engine
 
+test_db = "sqlite:///"
+
 class TestDbPersistence(unittest.TestCase):
-    
+
     def test_feed(self):
         # setup db
-        engine = create_engine(db_config.test_db)
+        engine = create_engine(test_db)
         session = orm.get_session(engine)
         orm.setup_database(engine)
         feed = orm.Feed("link", "title", "description", "format", "last_message_hash")
@@ -28,7 +30,7 @@ class TestDbPersistence(unittest.TestCase):
 
     def test_chat(self):
         # setup db
-        engine = create_engine(db_config.test_db)
+        engine = create_engine(test_db)
         session = orm.get_session(engine)
         chat = orm.Chat("chat_id")
         session.add(chat)
@@ -49,7 +51,7 @@ class TestDbPersistence(unittest.TestCase):
 
     def test_feedsubscriptions(self):
         #setup db
-        engine = create_engine(db_config.test_db)
+        engine = create_engine(test_db)
         session = orm.get_session(engine)
 
         # Create objects and link them together

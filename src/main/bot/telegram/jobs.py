@@ -1,57 +1,46 @@
 import logging
+import sqlalchemy
 import telegram
+
 from html2texttg import html2text
-import sqlalchemy.orm
-from sqlalchemy.sql import exists
 from telegram import ParseMode
-import main.visitors.rss
+
+import main.data.orm as orm
+import main.visitors.rss as rss
 
 """
     This module contains callback functions as jobs
 """
 
-def broadcast_welcome_job(context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
-    logger = logging.getLogger(__name__)
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
+def broadcast_new_rss_messages(context : telegram.ext.CallbackContext, engine : sqlalchemy.engine.Engine):
+    # Iterate through all feeds and send messages to associated chats
+    # Delete all orphan feeds you come across
+    session = orm.get_session(engine)
+    try:
+        feeds = session.query(orm.Feed).all()
+        logger.info(f"Broadcasting {len(feeds)} feeds...")
+        for feed in feeds:
+            # delete orphan feed
+            if len(feed.chats) == 0:
+                logger.info(f"Deleted orphan feed {feed}")
+                session.delete(feed)
+                continue
+            else:
+                # get new messages
+                new_messages, last_message_hash = rss.get_new_messages(feed)
 
-    chat_ids = session.query(Chats)
-    logger.info(f"Welcoming {len(chat_ids)} clients...")
+                # broadcast new messages to subscribed chats
+                for message in new_messages:
+                    text = f"*{feed.title}*\n[{message.title}]({message.link})"
+                    logger.info(f"Broadcasting feed {feed.title} to {len(feed.chats)} chats...")      
+                    for chat in feed.chats:
+                        context.bot.send_message(chat_id=chat.chat_id, text=text, parse_mode=ParseMode.MARKDOWN)
 
-    welcome_message = "*Hello*. I'm awake now!"
-
-    for chat_id in chat_ids:
-        context.bot.send_message(chat_id=chat_id, text=welcome_message, parse_mode = ParseMode.MARKDOWN)
-
-def broadcast_rss_job(context : telegram.ext.CallbackContext, rss_subscriptions_visitor : main.visitors.rss.RssSubscriptionsVisitor):
-    logger = logging.getLogger(__name__)
-    
-    # Look for new messages
-    updated_rss_subscriptions, new_rss_messages = rss_subscriptions_visitor.visit()
-
-    # Stop if no new messages are found
-    if len(new_rss_messages) == 0:
-        logger.info("broadcast_rss job finished")
-        return
-
-    # Get current chat ids to broadcast to
-    chat_ids = chat_id_visitor.visit()
-    if len(chat_ids) == 0:
-        logger.warning("No chat ids found")
-
-    # Broadcast rss messages        
-    for chat_id in chat_ids:
-        for msg in new_rss_messages:
-            # Set proper format
-            text = f"<b>{msg['title']}</b><p>{msg['description']}</p>"
-            text = html2text(text)
-            
-            try:
-                context.bot.send_message(chat_id = chat_id, text = text, parse_mode = ParseMode.MARKDOWN)
-            except telegram.error.BadRequest:
-                # If html has error, just send plainly formatted
-                logger.warn(f"Bad message format in message {msg['title']}")
-                context.bot.send_message(chat_id = chat_id, text = text)
-
-    # Update rss file
-    rss_subscriptions_visitor.persist_subscriptions(updated_rss_subscriptions)
-    logger.info("broadcast_rss job finished")
+            logger.debug(f"Setting last_message_hash from {feed.last_message_hash} to {last_message_hash}")
+            feed.last_message_hash = last_message_hash
+            session.commit()
+    finally:
+        session.close()

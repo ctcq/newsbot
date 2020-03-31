@@ -33,14 +33,16 @@ feed_subscription = Table('feed_subscription', Base.metadata,
 )
 
 def user_exists(session : sqlalchemy.orm.Session, chat_id : str):
-    return session.query(Chat.chat_id).filter(
-        exists().where(Chat.chat_id == chat_id)
-    ).count() > 0
+    if session.query(Chat.chat_id).filter(exists().where(Chat.chat_id == chat_id)).count() > 0:
+        return session.query(Chat).filter(Chat.chat_id == chat_id).all()[0]
+    else:
+        return None 
 
 def feed_exists(session : sqlalchemy.orm.Session, link : str):
-    return session.query(Feed.link).filter(
-        exists().where(Feed.link == link)
-    ).count() > 0
+    if session.query(Feed.link).filter(exists().where(Feed.link == link)).count() > 0:
+        return session.query(Feed).filter(Feed.link == link).all()[0]
+    else:
+        return None
 
 class Chat(Base):
     __tablename__ = 'chats'
@@ -66,11 +68,9 @@ class Feed(Base):
         back_populates='feeds'
     )
 
-    def __init__(self, link : str, title : str = "", description : str = "", format : str = "", last_message_hash : str = ""):
+    def __init__(self, link : str, title : str = "", last_message_hash : str = ""):
         self.link = link
         self.title = title
-        self.description = description
-        self.format = format
         self.last_message_hash = last_message_hash
 
     def __repr__(self):
