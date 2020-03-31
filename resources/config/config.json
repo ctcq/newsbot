@@ -1,6 +1,6 @@
 {
     "broadcast_interval_in_seconds" : 300,
 
-    "db_production" : "sqlite:///resources/data/newsfeed_bot.db",
+    "db_production" : "sqlite:////newsfeed_bot.db",
     "db_test" : "sqlite:///"
 }

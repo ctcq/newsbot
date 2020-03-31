@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 # load config
 logger.info("Loading config...")
-with open('./resources/config/config.json') as file:
+with open('/resources/config/config.json') as file:
     config = json.load(file)
 
 # init database
@@ -28,7 +28,7 @@ session = orm.get_session(engine)
 
 # init bot
 logger.info("Initiating bot...")
-with open('./resources/bot/token') as file:
+with open('/resources/bot/token') as file:
     bot_token = file.read()
 bot_facade = TelegramBotFacade(bot_token)
 
