@@ -1,4 +1,3 @@
-from main.config import db_config
 from sqlalchemy import Column, Integer, String, ForeignKey, Table, Text, create_engine
 from sqlalchemy.sql import exists
 from sqlalchemy.orm import relationship, sessionmaker

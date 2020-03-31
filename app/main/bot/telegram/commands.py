@@ -98,6 +98,31 @@ def subscribe(update : telegram.ext.Updater, context : telegram.ext.CallbackCont
                 logger.info(f"User {chat_id} has subscribed to feed {feed.link}")
                 context.bot.send_message(chat_id=chat_id, text=f"I will now notify you on new activity from *{parsed_feed.feed.title}*", parse_mode=ParseMode.MARKDOWN)
 
+# convenience command for subscribing to youtube channel / user rss feed
+def youtube(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
+    chat_id = update.effective_chat.id
+
+    # check if user exists
+    if (chat := orm.user_exists(session, chat_id)):
+        # parse query
+        message_split = update.message.text.split(" ")
+        if len(message_split) != 3 or message_split[1] not in ['user', 'channel', 'playlist']:
+            logger.debug(f"Invalid number of arguments for /youtube by user {chat_id}")
+            context.bot.send_message(chat_id=chat_id, text="*Wrong syntax*: Please enter the command like:\n /youtube <channel | user | playlist> <id>", parse_mode=ParseMode.MARKDOWN)
+        else:
+            # build a /subscribe request for the url associated with the given youtube entity
+            scope = message_split[1]
+
+            if scope in ['channel', 'playlist']:
+                scope += "_id"
+
+            id = message_split[2]
+            url = f"https://www.youtube.com/feeds/videos.xml?{scope}={id}"
+            logger.debug(f"User {chat_id} subscribing to youtube {scope} with id {id}")
+            update.message.text = f"/subscribe {url}"
+            subscribe(update = update, context=context, session=session)
+
+
 def unsubscribe(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
     chat_id = update.effective_chat.id
 
@@ -107,7 +132,7 @@ def unsubscribe(update : telegram.ext.Updater, context : telegram.ext.CallbackCo
         message_split = update.message.text.split(" ")
         if len(message_split) != 2:
             logger.debug(f"Missing argument for /subscribe by user {chat_id}")
-            context.bot.send_message(chat_id=chat_id, text="*Wrong syntax*: Please enter the command like:\n /subscribe <url>", parse_mode=ParseMode.MARKDOWN)
+            context.bot.send_message(chat_id=chat_id, text="*Wrong syntax*: Please enter the command like:\n /unsubscribe <url>", parse_mode=ParseMode.MARKDOWN)
         else:
             feed_url = message_split[1]
             # check if user is subscribed to feed
@@ -160,6 +185,9 @@ def help(update : telegram.ext.Updater, context : telegram.ext.CallbackContext):
     *Managment*
     /feeds - list all feeds you are subscribed to
     /subscribe <url> - subscribe to a feed
+    /youtube channel <channel-id> - subscribe to a youtube channel
+    /youtube user <username> - subscribe to a youtube user
+    /youtube playlist <playlist-id> subscribe to a youtube playlist
     /unsubscribe <url> - unsubscribe from a feed
 
     *Feedback*
