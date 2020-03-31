@@ -1,8 +1,6 @@
-FROM python:3
+FROM python:latest
 
 ADD . /opt/newsfeed_bot
-
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
-#ENTRYPOINT [ "python /opt/newsfeed_bot/src/main.py --resources /opt/newsfeed_bot/resources" ]
+WORKDIR /opt/newsfeed_bot
+RUN pip install --no-cache-dir -r ./requirements.txt
+CMD [ "python", "./src/main.py" ]
