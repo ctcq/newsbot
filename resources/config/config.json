@@ -1,3 +1,4 @@
 {
-    "broadcast_interval_in_seconds" : 300
+    "broadcast_interval_in_seconds" : 300,
+    "master_chat" : 808308112
 }

@@ -22,7 +22,17 @@ feeds = Table('feeds', Base.metadata,
 # create chat table
 chats = Table('chats', Base.metadata,
     Column('id', Integer, primary_key=True),
-    Column('chat_id', Integer)
+    Column('chat_id', Integer),
+    Column('timezone', String)
+)
+
+# create reminder table
+reminders = Table('reminders', Base.metadata,
+    Column('id', Integer, primary_key=True),
+    Column('timestamp', Integer),
+    Column('message', String),
+    Column('reminders_amount', Integer),
+    Column('reminders_seconds', Integer)
 )
 
 # create chat<->feeds association table 
@@ -74,6 +84,19 @@ class Feed(Base):
 
     def __repr__(self):
         return f"<Feed(link={self.link}, title={self.title}, description={self.description}, format={self.format}, last_message_hash={self.last_message_hash})>"
+
+class Reminder(Base):
+    __tablename__ = 'reminders'
+
+    def __init__(self, timestamp : int, message : str = "", reminders_amount : int = 0, reminder_seconds : int = 0):
+
+        self.timestamp = timestamp
+        self.message = message
+        self.reminders_amount = reminders_amount
+        self.reminders_seconds = reminders_seconds
+
+    def __repr__(self):
+        return f"<Reminder(timestamp={self.timestamp}, message={self.message}, reminders_amount={reminders_amount}, reminders_seconds={reminders_seconds})>"
 
 # Create all tables
 def setup_database(engine):

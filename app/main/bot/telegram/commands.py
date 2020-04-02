@@ -41,15 +41,7 @@ def stop(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, 
         logger.debug(f"Replying to command /stop from {chat_id}")
         context.bot.send_message(chat_id=chat_id, text="I have deleted all your feed subscriptions and won't be messaging you anymore. If you want to register again, just message /start again.")
     else:
-        logger.debug(f"Not registered user {chat_id} issued /stop")    
-
-# def feeds(update : telegram.ext.Update, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
-#     chat_id = update.effective_chat.id
-
-#     if orm.user_exists(session, chat_id):
-#         # remove user
-#         logger.debug(f"Showing feeds for user {chat_id}")
-#     pass # TODO
+        logger.debug(f"Not registered user {chat_id} issued /stop")
 
 def subscribe(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
     chat_id = update.effective_chat.id
@@ -121,7 +113,6 @@ def youtube(update : telegram.ext.Updater, context : telegram.ext.CallbackContex
             logger.debug(f"User {chat_id} subscribing to youtube {scope} with id {id}")
             update.message.text = f"/subscribe {url}"
             subscribe(update = update, context=context, session=session)
-
 
 def unsubscribe(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
     chat_id = update.effective_chat.id

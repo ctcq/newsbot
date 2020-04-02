@@ -5,6 +5,7 @@ import logging
 
 import main.bot.telegram.jobs as jobs
 import main.bot.telegram.commands as commands
+from main.bot.telegram.conversations.timezone import TimezoneConversation
 import main.data.orm as orm
 
 from telegram.ext import CommandHandler
@@ -51,6 +52,11 @@ bot_facade.add_command_handler('feeds', lambda updater, context : commands.feeds
 bot_facade.add_command_handler('subscribe', lambda updater, context : commands.subscribe(updater, context, session))
 bot_facade.add_command_handler('unsubscribe', lambda updater, context : commands.unsubscribe(updater, context, session))
 bot_facade.add_command_handler('youtube', lambda updater, context : commands.youtube(updater, context, session))
+
+# add conversation handlers
+logger.info("Adding conversation handlers...")
+tz_conv = TimezoneConversation()
+bot_facade.add_conversation_handler('set_timezone',tz_conv.get_conv_handler(session))
 
 # add job handlers
 logger.info("Adding job handlers...")

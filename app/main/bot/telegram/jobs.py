@@ -12,7 +12,6 @@ import main.visitors.rss as rss
     This module contains callback functions as jobs
 """
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 def broadcast_new_rss_messages(context : telegram.ext.CallbackContext, engine : sqlalchemy.engine.Engine):
