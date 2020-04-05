@@ -1,4 +1,4 @@
 __pycache__
-
+*.db
 # Bot token file
 resources/bot/token
