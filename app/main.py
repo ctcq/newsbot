@@ -56,6 +56,8 @@ bot_facade.add_command_handler('trackings', lambda updater, context : commands.t
 bot_facade.add_command_handler('unsubscribe', lambda updater, context : commands.unsubscribe(updater, context, session))
 bot_facade.add_command_handler('youtube', lambda updater, context : commands.youtube(updater, context, session))
 bot_facade.add_command_handler('untrack', lambda updater, context : commands.untrack(updater, context, session))
+bot_facade.add_command_handler('wiki', lambda updater, context : commands.wiki(updater, context, config['wikipedia_summary_sentences']))
+bot_facade.add_command_handler('qwiki', commands.qwiki)
 
 bot_facade.add_command_handler('reminder', lambda updater, context : commands.reminder(updater, context, session))
 

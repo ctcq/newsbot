@@ -4,6 +4,7 @@ import main.data.orm as orm
 import main.visitors.rss as rss
 import telegram
 import sqlalchemy.orm
+import wikipedia
 
 from sqlalchemy.sql import exists
 from telegram import ParseMode
@@ -212,6 +213,35 @@ def untrack(update : telegram.ext.Updater, context : telegram.ext.CallbackContex
             context.bot.send_message(chat_id=chat_id, text=f"There are not trackings with the name *{tracking_title}*", parse_mode=ParseMode.MARKDOWN)
     else:
         logger.debug(f"Unregistered user {chat_id}, issued /untrack")
+        return
+
+def qwiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext):
+    message = update.message.text
+    message_split = message.split(" ")
+    if len(message_split) < 2:
+        logging.debug("User issued /qwiki with invalid syntax")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid syntax!\nYou need to supply a search time like this:\n/qwiki London")
+        return
+    else:
+        logging.debug(f"User issued /qwiki with search term {message_split[0]}")
+        results = wikipedia.search(message_split[1])
+        message = ""
+        for result in results:
+            message += f"{result}\n"
+        context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+        return
+
+def wiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, length : int):
+    message = update.message.text
+    message_split = message.split(" ")
+    if len(message_split) < 2:
+        logging.debug("User issued /wiki with invalid syntax")
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid syntax!\nYou need to supply a search time like this:\n/wiki London")
+        return
+    else:
+        logging.debug(f"User issued /wiki with search term {message_split[0]}")
+        summary = wikipedia.summary(message_split[1], sentences=length)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=summary)
         return
 
 def help(update : telegram.ext.Updater, context : telegram.ext.CallbackContext):

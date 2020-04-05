@@ -3,5 +3,7 @@
     "reminder_interval_in_seconds" : 60,
     "reminder_notify_ahead_seconds" : 60,
     
+    "wikipedia_summary_sentences" : 5,
+
     "master_chat" : 808308112
 }
