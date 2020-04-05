@@ -1,7 +1,7 @@
 FROM python:latest
 
-ADD ./requirements.txt /
+COPY ./requirements.txt /
 RUN pip install --no-cache-dir -r ./requirements.txt
 
-ADD . /
+COPY . /
 CMD [ "python", "/app/main.py" ]
