@@ -163,6 +163,57 @@ def feeds(update : telegram.ext.Updater, context : telegram.ext.CallbackContext,
         logger.debug(f"Unregistered user {chat_id} issued /feeds")
         return
 
+def reminder(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
+    chat_id = update.effective_chat.id
+
+    # check if user exists
+    if (chat := orm.user_exists(session, chat_id)):
+        logger.debug(f"Listing reminders for user {chat_id}")
+        if len(chat.reminders) == 0:
+            context.bot.send_message(chat_id=chat_id, text = "You don't have any reminders set.\nEnter /remind to add one.")
+            return
+        else:
+            message_text = "You have set the following reminders:\n"
+            for reminder in chat.reminders:
+                message_text += f"{reminder.get_markdown()}\n"
+            context.bot.send_message(chat_id=chat_id, text=message_text, parse_mode=ParseMode.MARKDOWN)
+    else:
+        logger.debug(f"Unregistered user {chat_id} issued /reminder")
+        return
+
+def trackings(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
+    chat_id = update.effective_chat.id
+
+    if (chat:= orm.user_exists(session, chat_id)):
+        logger.debug(f"Listing trackings for user {chat_id}")
+        if len(chat.trackings) == 0:
+            context.bot.send_message(chat_id=chat_id, text="You don't have any data trackings registered.")
+            return
+        else:
+            message_text = "You have set data trackings for the following urls:\n"
+            for tracking in chat.trackings:
+                message_text += f"{tracking}\n"
+            context.bot.send_message(chat_id=chat_id, text=message_text, parse_mode=ParseMode.MARKDOWN)
+    else:
+        logger.debug(f"Unregistered user {chat_id}, issued /trackings")
+        return
+
+def untrack(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
+    chat_id = update.effective_chat.id
+    tracking_title = update.message.text.split(" ")[1]
+    if (chat:= orm.user_exists(session, chat_id)):
+        logger.debug(f"Deleting tracking {tracking_title} for {chat_id}")
+        trackings = session.query(orm.Tracking).filter(orm.Tracking.title == tracking_title and orm.Tracking.user_id == chat.id).all()
+        if (len(trackings) > 0):
+            session.delete(trackings[0])
+            session.commit()
+            context.bot.send_message(chat_id=chat_id, text=f"I have deleted the tracking of {tracking_title}", parse_mode=ParseMode.MARKDOWN)
+        else:
+            context.bot.send_message(chat_id=chat_id, text=f"There are not trackings with the name *{tracking_title}*", parse_mode=ParseMode.MARKDOWN)
+    else:
+        logger.debug(f"Unregistered user {chat_id}, issued /untrack")
+        return
+
 def help(update : telegram.ext.Updater, context : telegram.ext.CallbackContext):
     logger.debug("Replying to command /help")
     help_string = """

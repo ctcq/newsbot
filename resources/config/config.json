@@ -1,4 +1,7 @@
 {
     "broadcast_interval_in_seconds" : 300,
+    "reminder_interval_in_seconds" : 60,
+    "reminder_notify_ahead_seconds" : 60,
+    
     "master_chat" : 808308112
 }

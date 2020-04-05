@@ -1,6 +1,7 @@
 import logging
 import sqlalchemy
 import telegram
+import time
 
 from html2texttg import html2text
 from telegram import ParseMode
@@ -13,6 +14,24 @@ import main.visitors.rss as rss
 """
 
 logger = logging.getLogger(__name__)
+
+def notify_reminders(context : telegram.ext.CallbackContext, engine : sqlalchemy.engine.Engine, notify_ahead_seconds : int):
+    session = orm.get_session(engine)
+    try:
+        # Feetch all reminders before [now + ahead_seconds]
+        now = time.time() + notify_ahead_seconds
+        reminders = session.query(orm.Reminder).filter(orm.Reminder.timestamp <= now).all()
+        logger.info(f"Broadcasting {len(reminders)} due reminders")
+        for reminder in reminders:
+            text = f"*Reminder!*\n"
+            text += f"You wanted me to remind you of\n"
+            text += f"*{reminder.message}*\n"
+            
+            context.bot.send_message(chat_id=reminder.chat.chat_id, text=text, parse_mode = ParseMode.MARKDOWN)
+            session.delete(reminder)
+            session.commit()
+    finally:
+        session.close()
 
 def broadcast_new_rss_messages(context : telegram.ext.CallbackContext, engine : sqlalchemy.engine.Engine):
     # Iterate through all feeds and send messages to associated chats

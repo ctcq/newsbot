@@ -6,6 +6,8 @@ import logging
 import main.bot.telegram.jobs as jobs
 import main.bot.telegram.commands as commands
 from main.bot.telegram.conversations.timezone import TimezoneConversation
+from main.bot.telegram.conversations.reminder import ReminderConversation
+from main.bot.telegram.conversations.tracking import TrackingConversation
 import main.data.orm as orm
 
 from telegram.ext import CommandHandler
@@ -50,13 +52,23 @@ bot_facade.add_command_handler('help', lambda updater, context : commands.help(u
 
 bot_facade.add_command_handler('feeds', lambda updater, context : commands.feeds(updater, context, session))
 bot_facade.add_command_handler('subscribe', lambda updater, context : commands.subscribe(updater, context, session))
+bot_facade.add_command_handler('trackings', lambda updater, context : commands.trackings(updater, context, session))
 bot_facade.add_command_handler('unsubscribe', lambda updater, context : commands.unsubscribe(updater, context, session))
 bot_facade.add_command_handler('youtube', lambda updater, context : commands.youtube(updater, context, session))
+bot_facade.add_command_handler('untrack', lambda updater, context : commands.untrack(updater, context, session))
+
+bot_facade.add_command_handler('reminder', lambda updater, context : commands.reminder(updater, context, session))
 
 # add conversation handlers
 logger.info("Adding conversation handlers...")
 tz_conv = TimezoneConversation()
 bot_facade.add_conversation_handler('set_timezone',tz_conv.get_conv_handler(session))
+
+reminder_conv = ReminderConversation(session)
+bot_facade.add_conversation_handler('/remind',reminder_conv.get_conv_handler(session))
+
+tracking_conv = TrackingConversation(session)
+bot_facade.add_conversation_handler('/track',tracking_conv.get_conv_handler(session))
 
 # add job handlers
 logger.info("Adding job handlers...")
@@ -65,6 +77,12 @@ bot_facade.add_job_interval(
     lambda context : jobs.broadcast_new_rss_messages(context, engine),
     0,
     config['broadcast_interval_in_seconds']
+)
+bot_facade.add_job_interval(
+    'Reminders Notification',
+    lambda context : jobs.notify_reminders(context, engine, config['reminder_notify_ahead_seconds']),
+    0,
+    config['reminder_interval_in_seconds']
 )
 
 logger.info("Starting bot...")
