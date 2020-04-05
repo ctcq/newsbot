@@ -3,4 +3,5 @@ html2texttg>=1.0.3
 parsedatetime>=2.5
 python-telegram-bot>=12.4.2
 pytz>=2019.3
+requests>=2.23.0
 sqlalchemy>=1.3.15
