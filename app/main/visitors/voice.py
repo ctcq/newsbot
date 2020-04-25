@@ -32,7 +32,7 @@ class SpeechParser():
         with sr.AudioFile(wav_file) as source:
             voice = r.record(source)  # read the entire audio file
         try:
-            text = "I think you said:\n " + r.recognize_sphinx(voice)
+            text = "*I think you said:*\n " + r.recognize_sphinx(voice)
         except sr.UnknownValueError:
             text = "Sorry, I could not understand what you said."
         except sr.RequestError:
