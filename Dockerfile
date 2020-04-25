@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r ./requirements.txt
 RUN mkdir /opt/deepspeech
 WORKDIR /opt/deepspeech/
 RUN curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.7.0/deepspeech-0.7.0-models.pbmm
-    && curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.7.0/deepspeech-0.7.0-models.scorer
+RUN curl -LO https://github.com/mozilla/DeepSpeech/releases/download/v0.7.0/deepspeech-0.7.0-models.scorer
 
 
 COPY . /
