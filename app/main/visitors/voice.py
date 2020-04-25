@@ -45,7 +45,7 @@ class SpeechParser():
         result_json = subprocess.check_output(['deepspeech', '--model', DEEPSPEECH_MODEL, '--scorer', DEEPSPEECH_SCORER, '--audio', wav_file, '--json'])
         results = json.loads(result_json)['transcripts'][0]
 
-        text = ' '.join([words['word'] for words in results['words']])
+        text = results['words']#' '.join([words['word'] for words in results['words']])
         return text
 
 
