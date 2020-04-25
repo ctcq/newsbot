@@ -1,5 +1,5 @@
 import logging
-from deepspeech import Model
+import json
 import speech_recognition as sr
 import subprocess
 
@@ -40,17 +40,13 @@ class SpeechParser():
         return text
 
     def parse_deepspeech(self, wav_file : str) -> str:
-        self.logger.debug(f"Loading model {DEEPSPEECH_MODEL}")
-        self.logger.debug(f"Loading scorer {DEEPSPEECH_SCORER}")
-        model = Model(DEEPSPEECH_MODEL)
-        model.enableExternalScorer(DEEPSPEECH_SCORER)
+        self.logger.debug(f"Using model {DEEPSPEECH_MODEL} and scorer {DEEPSPEECH_SCORER}")
+        self.logger.debug(f"Parsing audio file {wav_file}...")
+        result_json = subprocess.check_output(['deepspeech', '--model', DEEPSPEECH_MODEL, '--scorer', DEEPSPEECH_SCORER, '--audio', wav_file, '--json'])
+        results = json.loads(result_json)['transcripts']
 
-        self.logger.debug(f"Parsing audio file {wav_file}")
-        with open(wav_file, 'rb') as file:
-            audio = file.read()
-        output = model.stt(audio) # The actual parsing
-        self.logger.debug(f"Parsing result: {output}")
-        return output
+        text = ' '.join([words['word'] for words in results['words']])
+        return text
 
 
     def to_wav(self, voice_file : str) -> str:    
