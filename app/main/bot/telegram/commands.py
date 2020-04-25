@@ -5,9 +5,13 @@ import main.visitors.rss as rss
 import telegram
 import sqlalchemy.orm
 import wikipedia
+import requests
 
+from io import BytesIO
+from PIL import Image
 from sqlalchemy.sql import exists
 from telegram import ParseMode
+from time import time
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +47,26 @@ def stop(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, 
         context.bot.send_message(chat_id=chat_id, text="I have deleted all your feed subscriptions and won't be messaging you anymore. If you want to register again, just message /start again.")
     else:
         logger.debug(f"Not registered user {chat_id} issued /stop")
+
+def rimg(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
+    chat_id = update.effective_chat.id
+    args = update.message.text.split(' ')
+    if len(args) > 1:
+        random_string = ''.join(args[1:])
+    else:
+        random_string = time()
+
+
+    api_url = f"https://gitlab.com/api/v4/avatar?email={random_string}"
+    logger.info(f"Getting random image data from {api_url}")
+
+    response = requests.get(api_url, params={'email' : random_string})
+    response_json = response.json()
+    img_url = response_json['avatar_url']
+    logger.debug(f"Image url {img_url}")
+    # response = requests.get(img_url)
+    # img = Image.open(BytesIO(response.content))
+    context.bot.send_photo(chat_id=chat_id, photo=img_url)
 
 def subscribe(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
     chat_id = update.effective_chat.id
@@ -218,13 +242,14 @@ def untrack(update : telegram.ext.Updater, context : telegram.ext.CallbackContex
 def qwiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext):
     message = update.message.text
     message_split = message.split(" ")
+    search_text = ''.join(message_split[1:])
     if len(message_split) < 2:
         logging.debug("User issued /qwiki with invalid syntax")
         context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid syntax!\nYou need to supply a search time like this:\n/qwiki London")
         return
     else:
         logging.debug(f"User issued /qwiki with search term {message_split[0]}")
-        results = wikipedia.search(message_split[1])
+        results = wikipedia.search(search_text)
         message = ""
         for result in results:
             message += f"{result}\n"
@@ -234,13 +259,14 @@ def qwiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext)
 def wiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, length : int):
     message = update.message.text
     message_split = message.split(" ")
-    if len(message_split) < 2:
+    if (len(message_split) < 2):
         logging.debug("User issued /wiki with invalid syntax")
         context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid syntax!\nYou need to supply a search time like this:\n/wiki London")
         return
     else:
-        logging.debug(f"User issued /wiki with search term {message_split[0]}")
-        summary = wikipedia.summary(message_split[1], sentences=length)
+        search_text = ''.join(message_split[1:])
+        logging.debug(f"User issued /wiki with search term {search_text}")
+        summary = wikipedia.summary(search_text, sentences=length)
         context.bot.send_message(chat_id=update.effective_chat.id, text=summary)
         return
 
@@ -262,8 +288,13 @@ def help(update : telegram.ext.Updater, context : telegram.ext.CallbackContext):
     /youtube playlist <playlist-id> subscribe to a youtube playlist
     /unsubscribe <url> - unsubscribe from a feed
 
-    *Feedback*
-    /bug <message> - report bugs and other inconveniences
-    /canyou <message> - feature requests and improvements
+    /remind - Start the reminder dialog
+    /reminder - List all reminders
+
+    /qwiki <word> - Search wikipedia for the given word
+    /wiki <word> - Show a wikipedia summary for a word
+
+    /rimg <word> - Show a random graphic
+
     """
     context.bot.send_message(chat_id = update.effective_chat.id, text = help_string, parse_mode = ParseMode.MARKDOWN)

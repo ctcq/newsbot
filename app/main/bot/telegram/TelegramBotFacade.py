@@ -1,7 +1,7 @@
 from typing import Callable
 import logging
-from telegram.ext import Updater
-from telegram.ext import CommandHandler, ConversationHandler
+from telegram.ext import CommandHandler, ConversationHandler, MessageHandler, Updater
+from telegram.ext.filters import Filters
 
 class TelegramBotFacade():
 
@@ -27,6 +27,10 @@ class TelegramBotFacade():
     def add_job_once(self, callback : Callable, name : str):
         self.logger.info(f"Adding job '{name}'")
         self.updater.job_queue.run_once(callback, 0)
+
+    def add_voice_handler(self, callback : Callable):
+        self.logger.info(f"Adding audio message handler!")
+        self.dispatcher.add_handler(MessageHandler(Filters.voice, callback))
 
     def add_command_handler(self, command : str, callback : Callable):
         self.logger.info(f"Adding handler for command {command}")

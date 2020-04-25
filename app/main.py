@@ -3,6 +3,7 @@ import argparse
 import json
 import logging
 
+import main.bot.telegram.messages as messages
 import main.bot.telegram.jobs as jobs
 import main.bot.telegram.commands as commands
 from main.bot.telegram.conversations.timezone import TimezoneConversation
@@ -44,8 +45,13 @@ with open(f"{resource_dir}/bot/token") as file:
     bot_token = file.read()
 bot_facade = TelegramBotFacade(bot_token)
 
+
 # add command handlers
 logger.info("Adding bot handlers...")
+
+# add audio handler
+bot_facade.add_voice_handler(lambda updater, context : messages.handle_voice(updater, context, session))
+
 bot_facade.add_command_handler('start', lambda updater, context : commands.start(updater, context, session))
 bot_facade.add_command_handler('stop', lambda updater, context : commands.stop(updater, context, session))
 bot_facade.add_command_handler('help', lambda updater, context : commands.help(updater, context))
@@ -56,6 +62,7 @@ bot_facade.add_command_handler('trackings', lambda updater, context : commands.t
 bot_facade.add_command_handler('unsubscribe', lambda updater, context : commands.unsubscribe(updater, context, session))
 bot_facade.add_command_handler('youtube', lambda updater, context : commands.youtube(updater, context, session))
 bot_facade.add_command_handler('untrack', lambda updater, context : commands.untrack(updater, context, session))
+bot_facade.add_command_handler('rimg', lambda updater, context : commands.rimg(updater, context, session))
 bot_facade.add_command_handler('wiki', lambda updater, context : commands.wiki(updater, context, config['wikipedia_summary_sentences']))
 bot_facade.add_command_handler('qwiki', commands.qwiki)
 
