@@ -1,6 +1,6 @@
 FROM python:latest
 
-RUN apt-get update && apt-get install -y curl ffmpeg pocketsphinx libasound2-dev libpulse-dev python-sphinxbase swig
+RUN apt-get update && apt-get install -y curl ffmpeg pocketsphinx libasound2-dev libpulse-dev python-sphinxbase sox swig
 
 # Update pip
 RUN python -m pip install --upgrade pip setuptools wheel
