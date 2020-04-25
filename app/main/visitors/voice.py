@@ -52,7 +52,7 @@ class SpeechParser():
 
 
     def to_wav(self, voice_file : str) -> str:    
-        wav_file = ''.join(voice_file.split('.')[:-1]) # substitute file ending with '.wav'  
+        wav_file = ''.join(voice_file.split('.')[:-1]) + '.wav' # substitute file ending with '.wav'  
 
         # Convert to wav
         self.logger.info(f"Converting {voice_file} to {wav_file}...")
