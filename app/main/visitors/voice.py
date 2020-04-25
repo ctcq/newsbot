@@ -46,7 +46,8 @@ class SpeechParser():
         model.enableExternalScorer(DEEPSPEECH_SCORER)
 
         self.logger.debug(f"Parsing audio file {wav_file}")
-        audio = open(wav_file, 'rb')
+        with open(wav_file, 'rb') as file:
+            audio = file.read()
         output = model.stt(audio) # The actual parsing
         self.logger.debug(f"Parsing result: {output}")
         return output
