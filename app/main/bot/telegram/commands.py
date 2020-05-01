@@ -256,7 +256,7 @@ def qwiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext)
         context.bot.send_message(chat_id=update.effective_chat.id, text=message)
         return
 
-def wiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, length : int):
+def wiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, default_sentences : int = 2):
     message = update.message.text
     message_split = message.split(" ")
     if (len(message_split) < 2):
@@ -266,7 +266,12 @@ def wiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, 
     else:
         search_text = ''.join(message_split[1:])
         logging.debug(f"User issued /wiki with search term {search_text}")
-        summary = wikipedia.summary(search_text, sentences=length)
+        page = wikipedia.page(search_text)
+        summary = wikipedia.summary(search_text, sentences=default_sentences)
+        
+        markdown = f"# {page.title}"
+        markdown += f"{summary}\n"
+        markdown += f"{page.url}"
         context.bot.send_message(chat_id=update.effective_chat.id, text=summary)
         return
 
