@@ -272,7 +272,7 @@ def wiki(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, 
         markdown = f"# {page.title}"
         markdown += f"{summary}\n"
         markdown += f"{page.url}"
-        context.bot.send_message(chat_id=update.effective_chat.id, text=summary, parse_mode = ParseMode.MARKDOWN)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=summary)
         return
 
 def help(update : telegram.ext.Updater, context : telegram.ext.CallbackContext):
