@@ -2,7 +2,7 @@ import json
 import logging
 import sqlalchemy.orm
 import telegram.ext
-from main.visitors.voice import SpeechParser 
+#from main.visitors.voice import SpeechParser 
 
 from telegram import ParseMode
 
@@ -12,6 +12,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 with open('/resources/config/config.json') as file:
     config = json.load(file)
 
+'''
 def handle_voice(update : telegram.ext.Updater, context : telegram.ext.CallbackContext, session : sqlalchemy.orm.Session):
     chat_id = update.effective_chat.id
     voice_file = f"/tmp/{chat_id}.oga"
@@ -26,3 +27,4 @@ def handle_voice(update : telegram.ext.Updater, context : telegram.ext.CallbackC
     result = parser.parse(wav_file)
 
     context.bot.send_message(chat_id=chat_id, text=result, parse_mode=ParseMode.MARKDOWN)
+'''
