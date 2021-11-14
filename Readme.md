@@ -10,5 +10,5 @@ For a complete list of functions, send `/help` to the bot.
 
 ## Installation
 1. Setup a telegram bot and put the bot token inside `resources/bot/token`.
-2. Build the docker image via `sh build-iamge.sh 
+2. Build the docker image via `sh build-image.sh` 
 3. Run the image in a docker container.
